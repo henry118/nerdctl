@@ -88,8 +88,9 @@ func Convert(ctx context.Context, client *containerd.Client, srcRawRef, targetRa
 	overlaybd := options.Overlaybd
 	nydus := options.Nydus
 	soci := options.Soci
+	erofs := options.Erofs
 	var finalize func(ctx context.Context, cs content.Store, ref string, desc *ocispec.Descriptor) (*images.Image, error)
-	if estargz || zstd || zstdchunked || overlaybd || nydus || soci {
+	if estargz || zstd || zstdchunked || overlaybd || nydus || soci || erofs {
 		convertCount := 0
 		if estargz {
 			convertCount++
@@ -107,6 +108,9 @@ func Convert(ctx context.Context, client *containerd.Client, srcRawRef, targetRa
 			convertCount++
 		}
 		if soci {
+			convertCount++
+		}
+		if erofs {
 			convertCount++
 		}
 
@@ -179,6 +183,12 @@ func Convert(ctx context.Context, client *containerd.Client, srcRawRef, targetRa
 				Image: convertedRef,
 			}
 			return printConvertedImage(options.Stdout, options, res)
+		case erofs:
+			convertFunc, err = converterutil.ErofsLayerConvertFunc(options)
+			if err != nil {
+				return err
+			}
+			convertType = "erofs"
 		}
 
 		if convertType != "overlaybd" {

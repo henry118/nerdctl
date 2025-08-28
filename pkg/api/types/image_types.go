@@ -74,6 +74,7 @@ type ImageConvertOptions struct {
 	NydusOptions
 	OverlaybdOptions
 	SociConvertOptions
+	ErofsConvertOptions
 }
 
 // EstargzOptions contains eStargz conversion options
@@ -144,6 +145,12 @@ type SociConvertOptions struct {
 	Soci bool
 	// SociOptions contains SOCI-specific options
 	SociOptions SociOptions
+	// #endregion
+}
+
+type ErofsConvertOptions struct {
+	// Erofs convert image to EROFS format. Should be used in conjunction with '--oci'
+	Erofs bool
 	// #endregion
 }
 

@@ -95,6 +95,10 @@ func convertCommand() *cobra.Command {
 	cmd.Flags().Int64("soci-span-size", -1, "The size of SOCI spans")
 	// #endregion
 
+	// #region erofs flags
+	cmd.Flags().Bool("erofs", false, "Convert image to EROFS format. Should be used in conjunction with '--oci'")
+	// #endregion
+
 	// #region generic flags
 	cmd.Flags().Bool("uncompress", false, "Convert tar.gz layers to uncompressed tar layers")
 	cmd.Flags().Bool("oci", false, "Convert Docker media types to OCI media types")
@@ -234,6 +238,13 @@ func convertOptions(cmd *cobra.Command) (types.ImageConvertOptions, error) {
 	}
 	// #endregion
 
+	// #region erofs flags
+	erofs, err := cmd.Flags().GetBool("erofs")
+	if err != nil {
+		return types.ImageConvertOptions{}, err
+	}
+	// #endregion
+
 	// #region generic flags
 	uncompress, err := cmd.Flags().GetBool("uncompress")
 	if err != nil {
@@ -304,6 +315,9 @@ func convertOptions(cmd *cobra.Command) (types.ImageConvertOptions, error) {
 				SpanSize:     sociSpanSize,
 				MinLayerSize: sociMinLayerSize,
 			},
+		},
+		ErofsConvertOptions: types.ErofsConvertOptions{
+			Erofs: erofs,
 		},
 		Stdout: cmd.OutOrStdout(),
 	}, nil
